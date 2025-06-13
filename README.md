@@ -23,6 +23,21 @@ Meow Explain is a web application that transforms complex topics into fun and en
 - FFmpeg (make sure it's in the PATH)
 - pip (Python package manager)
 
+## Setting Gemini API Key
+This project uses Google Gemini (GenAI) for AI features. You need to set your Gemini API key before running the app.
+
+1. Get your Gemini API key from [Google AI Studio](https://aistudio.google.com/app/apikey).
+2. Create a `.env` file in the project root (if it does not exist).
+3. Add this line to your `.env` file:
+   ```
+   GEMINI_API_KEY=your_api_key_here
+   ```
+4. **You must also manually set your API key in these files:**
+   - `index.tsx`: Replace the value of `const apiKey = '...'` with your own key.
+   - `vite.config.js`: Replace the value in `'process.env.GEMINI_API_KEY': JSON.stringify('...')` with your own key.
+5. **Never share your API key publicly!**
+6. Restart the application after setting the key.
+
 ### Quick Start (Windows PowerShell)
 ```powershell
 git clone https://github.com/cybha22/meow-explain.git
