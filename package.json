@@ -1,0 +1,27 @@
+{
+  "name": "tiny-cats-app",
+  "version": "1.0.0",
+  "description": "Tiny Cats application with video generation capabilities",
+  "type": "module",
+  "scripts": {
+    "start:frontend": "vite",
+    "start:backend": "cd Backend && uvicorn main:app --reload --host 127.0.0.1 --port 8000",
+    "dev": "concurrently --kill-others --names \"FRONTEND,BACKEND\" --prefix-colors \"bgBlue.bold,bgGreen.bold\" --success first \"npm run start:backend\" \"npm:start:frontend\"",
+    "dev:win": "concurrently --kill-others --names \"BACKEND,FRONTEND\" --prefix-colors \"bgGreen.bold,bgBlue.bold\" \"npm run start:backend\" \"npm run start:frontend\"",
+    "dev:ps": "powershell -Command \"$Env:PYTHONPATH = '.'; cd ./Backend; $backProc = Start-Process -NoNewWindow python -ArgumentList './main.py' -PassThru; Start-Sleep -s 2; npm run start:frontend; Stop-Process -Id $backProc.Id\"",
+    "install:backend": "cd Backend && pip install -r requirements.txt",
+    "install:all": "npm install && npm run install:backend",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@google/genai": "^0.7.0",
+    "marked": "^15.0.7"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "@types/node": "^22.14.0",
+    "typescript": "~5.7.2",
+    "vite": "^6.3.5"
+  }
+}

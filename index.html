@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tiny Cats - Penjelasan dengan Gambar Kucing Kecil</title>
+  <!-- Cross-Origin Isolation untuk SharedArrayBuffer -->
+  <meta http-equiv="Cross-Origin-Embedder-Policy" content="require-corp">
+  <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin">
+  <script type="importmap">
+    {
+      "imports": {
+        "@google/genai": "https://esm.sh/@google/genai@^0.7.0",
+        "marked": "https://esm.sh/marked@^15.0.7"
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="/index.css">
+</head>
+<body>
+<div class="app-container">
+  <div class="container glass-effect">
+    <div class="header">
+      <h1>Explain Things with <span class="gradient-text">Tiny Cats</span></h1>
+      <div class="header-accent"></div>
+    </div>
+    
+    <div class="content-section">
+      <h2>Choose an example</h2>
+      <ul id="examples">
+        <li><div class="example-card">Explain how neural networks work.</div></li>
+        <li><div class="example-card">Explain how The Matrix works.</div></li>
+        <li><div class="example-card">Explain how spaghettification works.</div></li>
+      </ul>
+      
+      <h2>Or enter your own prompt</h2>
+      <div class="input-container">
+        <textarea id="input" placeholder="Type your question here..."></textarea>
+        <div class="input-bottom">
+          <button id="submit-btn">Generate</button>
+          <div class="subtle-text">Press Enter ↵</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="output"></div>
+    <div id="error" hidden></div>
+    <div class="results-container">
+      <div id="slideshow" hidden></div>
+      
+      <!-- Video Generator Section -->
+      <div id="video-generator" class="video-generator" hidden>
+        <div class="video-generator-header">
+          <h2>Buat Video Shorts</h2>
+          <p>Jadikan gambar-gambar di atas menjadi video dengan narasi suara</p>
+        </div>
+        
+        <div class="video-options">
+          <div class="option-group">
+            <label for="language-select">Bahasa Narasi:</label>
+            <select id="language-select">
+              <option value="id">Indonesia</option>
+              <option value="en">English</option>
+              <option value="ja">日本語</option>
+              <option value="ko">한국어</option>
+            </select>
+          </div>
+          
+          <div class="option-group">
+            <label for="voice-select">Pilih Suara:</label>
+            <select id="voice-select">
+              <option value="loading">Memuat suara...</option>
+            </select>
+          </div>
+          
+          <div class="option-group">
+            <label for="speed-range">Kecepatan Bicara:</label>
+            <input type="range" id="speed-range" min="0.5" max="1.5" step="0.1" value="1.0">
+            <span id="speed-value">1.0</span>
+          </div>
+          
+          <div class="option-group">
+            <label for="min-duration">Durasi Minimal (detik):</label>
+            <input type="number" id="min-duration" min="35" value="35" step="1">
+          </div>
+        </div>
+        
+        <button id="generate-video-btn" class="accent-button">Mulai Buat Video</button>
+        
+        <div id="video-progress" class="video-progress" hidden>
+          <div class="progress-header">
+            <h3>Proses Pembuatan Video</h3>
+            <div class="progress-status">Status: <span id="status-text">Mengirim data...</span></div>
+          </div>
+          
+          <div class="progress-bar-container">
+            <div id="progress-bar" class="progress-bar"></div>
+          </div>
+          
+          <div id="log-container" class="log-container">
+            <div id="progress-log" class="progress-log"></div>
+          </div>
+        </div>
+        
+        <div id="video-result" class="video-result" hidden>
+          <h3>Video Berhasil Dibuat!</h3>
+          <video id="result-video" controls></video>
+          <div class="video-actions">
+            <a id="download-link" class="download-button" download>Download Video</a>
+            <button id="share-btn" class="share-button">Bagikan</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Text Modal -->
+<div id="edit-text-modal" class="edit-text-modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Edit Teks</h3>
+      <button class="modal-close" id="modal-close">&times;</button>
+    </div>
+    <div class="modal-body">
+      <textarea id="edit-text-input"></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-btn btn-cancel" id="modal-cancel">Batal</button>
+      <button class="modal-btn btn-save" id="modal-save">Simpan</button>
+    </div>
+  </div>
+</div>
+
+<!-- Drawing Editor Modal -->
+<div id="draw-editor-modal" class="draw-editor-modal">
+  <div class="drawing-editor-content">
+    <div class="drawing-editor-header">
+      <h3>Edit Gambar</h3>
+      <button class="drawing-editor-close" id="drawing-close">&times;</button>
+    </div>
+    <div class="drawing-editor-body">
+      <div class="canvas-container">
+        <canvas id="drawing-canvas"></canvas>
+      </div>
+      
+      <div class="drawing-tools">
+        <div class="tool-section">
+          <div class="tool-section-title">Warna</div>
+          <div class="color-picker" id="color-picker">
+            <div class="color-option active" style="background-color: #000000" data-color="#000000"></div>
+            <div class="color-option" style="background-color: #ffffff" data-color="#ffffff"></div>
+            <div class="color-option" style="background-color: #ff0000" data-color="#ff0000"></div>
+            <div class="color-option" style="background-color: #ff9900" data-color="#ff9900"></div>
+            <div class="color-option" style="background-color: #ffff00" data-color="#ffff00"></div>
+            <div class="color-option" style="background-color: #00ff00" data-color="#00ff00"></div>
+            <div class="color-option" style="background-color: #00ffff" data-color="#00ffff"></div>
+            <div class="color-option" style="background-color: #0000ff" data-color="#0000ff"></div>
+            <div class="color-option" style="background-color: #9900ff" data-color="#9900ff"></div>
+            <div class="color-option" style="background-color: #ff00ff" data-color="#ff00ff"></div>
+            <div class="color-option" style="background-color: #ff99cc" data-color="#ff99cc"></div>
+            <div class="color-option" style="background-color: #99cc00" data-color="#99cc00"></div>
+            <div class="color-option" style="background-color: #336699" data-color="#336699"></div>
+            <div class="color-option" style="background-color: #663300" data-color="#663300"></div>
+          </div>
+        </div>
+        
+        <div class="tool-section">
+          <div class="tool-section-title">Ukuran Kuas</div>
+          <div class="brush-size">
+            <input type="range" id="size-slider" class="size-slider" min="1" max="50" value="5">
+            <span id="size-value" class="size-value">5</span>
+          </div>
+        </div>
+        
+        <div class="tool-section">
+          <div class="tool-section-title">Tools</div>
+          <div class="tool-buttons">
+            <button id="brush-tool" class="tool-btn active" title="Kuas">🖌️</button>
+            <button id="eraser-tool" class="tool-btn" title="Penghapus">🧽</button>
+          </div>
+        </div>
+        
+        <div class="tool-section">
+          <div class="tool-section-title">Riwayat</div>
+          <div class="history-buttons">
+            <button id="undo-btn" class="tool-btn" title="Undo">↩️</button>
+            <button id="redo-btn" class="tool-btn" title="Redo">↪️</button>
+            <button id="clear-btn" class="tool-btn" title="Hapus Semua">🗑️</button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="drawing-actions">
+        <button id="cancel-drawing" class="action-btn btn-cancel-drawing">Batal</button>
+        <button id="save-drawing" class="action-btn btn-save-drawing">Simpan Gambar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="/index.tsx"></script>
+</body>
+</html>
