@@ -7,7 +7,7 @@ import {GoogleGenAI, Modality} from '@google/genai';
 import {marked} from 'marked';
 
 // Konfigurasi API key
-const apiKey = 'AIzaSyAVr8a4i3fxBejHIQ61BK52axFQq1GIQEo';
+const apiKey = 'set api key';
 
 // Inisialisasi Google Genai dengan API key
 const ai = new GoogleGenAI({
