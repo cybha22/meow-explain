@@ -1,3 +1,16 @@
+<!-- Preview Images Showcase -->
+<p align="center">
+  <img src="images-preview/1.png" width="320" alt="Home - Cute Cat Slideshow"/>
+  <img src="images-preview/2.png" width="320" alt="AI Cat Explanation Example"/>
+  <img src="images-preview/u can create shorts videos.png" width="320" alt="Create Shorts Videos Easily"/>
+  <img src="images-preview/u can edit teks.png" width="320" alt="Edit Slide Text"/>
+  <img src="images-preview/u can edit image.png" width="320" alt="Edit Slide Image"/>
+</p>
+
+<p align="center">
+  <b>Left to right:</b> Home page, AI-generated cat explanation, create shorts videos, edit slide text, edit slide image.
+</p>
+
 # Meow Explain
 
 Meow Explain is a web application that transforms complex topics into fun and engaging slideshows featuring cute cat illustrations, complete with voice narration and exportable as short videos. Perfect for education, entertainment, and sharing knowledge on social media like YouTube Shorts, Instagram Reels, and Facebook!
